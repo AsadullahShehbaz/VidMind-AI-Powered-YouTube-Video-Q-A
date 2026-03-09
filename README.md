@@ -1,6 +1,6 @@
-# 🤖📄 Gemini DocChat App
+# 🤖📄 FocusBot-LLM-DocReader-Assistant
 
-Welcome to the **Gemini DocChat App** — a sleek and modern AI-powered web app built with **Streamlit** that allows users to:
+Welcome to the **FocusBot-LLM-DocReader-Assistant** — a sleek and modern AI-powered web app built with **Streamlit** that allows users to:
 - 💬 **Chat with Gemini AI** like ChatGPT  
 - 📑 **Upload and summarize PDFs** with instant answers  
 - 📚 **Preserve chat history**, use multi-page navigation  
