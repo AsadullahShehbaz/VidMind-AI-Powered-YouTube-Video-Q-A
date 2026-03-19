@@ -115,48 +115,190 @@ elif page == "📄 Document Reader":
 # 🎥 Study Tube Page (YouTube)
 # =====================
 elif page == "🎥Watch Youtube":
-    st.title("🧠 Study Tube - Learn Better without Distractions")
+import streamlit as st
+import re
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 
-    st.subheader("🔗 YouTube Link")
-    youtube_url = st.text_input("Paste YouTube video URL")
+# ---------- Page configuration ----------
+st.set_page_config(
+    page_title="YouTube Transcript Extractor",
+    page_icon="🎬",
+    layout="centered"
+)
 
-    st.markdown("---")
-    st.header("🎬 Lecture Video")
+# ---------- Custom CSS for a polished look ----------
+st.markdown("""
+<style>
+    .main > div {
+        padding: 2rem 1rem;
+    }
+    .stButton button {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.5rem 2rem;
+        border: none;
+        transition: all 0.2s;
+    }
+    .stButton button:hover {
+        background-color: #45a049;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .stTextInput input {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 0.75rem;
+    }
+    .success-box {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+        margin: 1rem 0;
+    }
+    .error-box {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+        margin: 1rem 0;
+    }
+    .info-box {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #17a2b8;
+        margin: 1rem 0;
+    }
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+        background: #000;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-    @st.cache_data
-    def get_video_id(url):
-        regex = r"(?:youtube\.com/(?:.*v=|v/|embed/)|youtu\.be/)([A-Za-z0-9_-]{11})"
-        match = re.search(regex, url)
-        return match.group(1) if match else None
+# ---------- Helper function to extract video ID ----------
+def extract_video_id(url):
+    """
+    Extract YouTube video ID from various URL formats.
+    """
+    patterns = [
+        r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)',
+        r'youtube\.com\/watch\?.*v=([^&\n?#]+)',
+        r'youtu\.be\/([^?\n]*)',
+        r'youtube\.com\/shorts\/([^?\n]*)'
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
 
-    @st.cache_resource
-    def load_summarizer():
-        return pipeline("summarization")
+# ---------- Function to fetch transcript ----------
+def fetch_transcript(video_id):
+    """
+    Retrieve the transcript for a given video ID.
+    """
+    try:
+        ytt_api = YouTubeTranscriptApi()
+        transcript_obj = ytt_api.fetch(video_id, languages=['en', 'hi'])
+        transcript = " ".join(snippet.text for snippet in transcript_obj.snippets)
+        return transcript, None
+    except TranscriptsDisabled:
+        return None, "No captions are available for this video."
+    except NoTranscriptFound:
+        return None, "No English transcript was found. The video might have captions in another language."
+    except Exception as e:
+        return None, f"An unexpected error occurred: {str(e)}"
 
-    video_id = get_video_id(youtube_url)
-    notes_key = f"notes_{video_id}" if video_id else "notes_default"
+# ---------- Function to generate distraction‑free embed ----------
+def get_video_embed_html(video_id):
+    """
+    Return an iframe with parameters to minimise distractions (no ads, no suggestions).
+    Uses youtube-nocookie.com for privacy.
+    """
+    return f"""
+    <div class="video-container">
+        <iframe src="https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1&iv_load_policy=3&controls=1&autoplay=0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
+    </div>
+    """
 
-    if youtube_url:
-        if video_id:
-            embed_url = f"https://www.youtube.com/embed/{video_id}?rel=0"
+# ---------- Main UI ----------
+st.title("🎥 YouTube Transcript Extractor")
+st.markdown("Enter a YouTube link to watch the video **without distractions** and get its full transcript.")
 
-            st.markdown(
-                f"""
-                <div style='position:relative;padding-bottom:56.25%;height:0;overflow:hidden;'>
-                    <iframe src="{embed_url}" 
-                            style='position:absolute;top:0;left:0;width:100%;height:100%;' 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                    </iframe>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+# Input row with a default example
+col1, col2 = st.columns([3, 1])
+with col1:
+    url_input = st.text_input(
+        "Video URL",
+        value="https://www.youtube.com/watch?v=1dkfuga2_Ps",
+        placeholder="Paste YouTube link here...",
+        label_visibility="collapsed"
+    )
+with col2:
+    fetch_button = st.button("Get Transcript & Video", type="primary")
+
+# Process the request
+if fetch_button:
+    if not url_input.strip():
+        st.markdown('<div class="error-box">⚠️ Please enter a YouTube URL.</div>', unsafe_allow_html=True)
+    else:
+        video_id = extract_video_id(url_input)
+        if not video_id:
+            st.markdown('<div class="error-box">❌ Could not extract video ID from the provided URL. Please check the link.</div>', unsafe_allow_html=True)
         else:
-            st.error("❌ Invalid YouTube URL format. Please check the link.")
+            # Always show the video player (distraction‑free)
+            st.markdown("### 🎬 Video Player")
+            st.markdown(get_video_embed_html(video_id), unsafe_allow_html=True)
+            st.caption("ℹ️ The player hides suggestions and uses youtube‑nocookie.com for privacy. Ads may still appear depending on the video owner.")
 
-    st.markdown("---")
+            # Fetch transcript
+            with st.spinner("Fetching transcript..."):
+                transcript, error = fetch_transcript(video_id)
+
+            if error:
+                st.markdown(f'<div class="error-box">❌ {error}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="success-box">✅ Transcript fetched successfully! (Video ID: <code>{video_id}</code>)</div>', unsafe_allow_html=True)
+
+                # Transcript display with copy button
+                st.markdown("### 📄 Transcript")
+                st.code(transcript, language="text")
+
+                # Word/character count
+                word_count = len(transcript.split())
+                char_count = len(transcript)
+                st.caption(f"📊 {word_count} words · {char_count} characters")
+
+# Footer / info
+st.markdown("---")
+st.markdown(
+    "🔍 **Note:** The transcript is fetched using the [youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api). "
+    "Only videos with English (or Hindi) captions are supported."
+)
 
 # =====================
 # 💱 Currency Converter Page
