@@ -277,7 +277,7 @@ def video_embed_html(video_id: str) -> str:
 @st.cache_resource
 def get_llm():
     return ChatGroq(
-        model="meta-llama/llama-4-maverick-17b-128e-instruct",   # closest available open-source 120b-class model on Groq
+        model="openai/gpt-oss-120b",   # closest available open-source 120b-class model on Groq
         temperature=0.4,
         api_key=st.secrets["GROQ_API_KEY"],
     )
