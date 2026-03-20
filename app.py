@@ -307,7 +307,7 @@ with st.sidebar:
     video_url = st.text_input(
         label="url",
         value=st.session_state.video_url,
-        placeholder="https://youtube.com/watch?v=...",
+        placeholder="Enter Video URL",
         label_visibility="collapsed",
         key="url_input",
     )
