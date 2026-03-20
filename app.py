@@ -277,7 +277,7 @@ def video_embed_html(video_id: str) -> str:
 @st.cache_resource
 def get_llm():
     return ChatGroq(
-        model="openai/gpt-oss-120b",   # closest available open-source 120b-class model on Groq
+        model="meta-llama/llama-4-maverick-17b-128e-instruct",   # closest available open-source 120b-class model on Groq
         temperature=0.4,
         api_key=st.secrets["GROQ_API_KEY"],
     )
@@ -307,7 +307,7 @@ with st.sidebar:
     video_url = st.text_input(
         label="url",
         value=st.session_state.video_url,
-        placeholder="Enter Video URL",
+        placeholder="https://youtube.com/watch?v=...",
         label_visibility="collapsed",
         key="url_input",
     )
@@ -319,22 +319,27 @@ with st.sidebar:
             st.session_state.transcript = None
             st.session_state.video_id = None
         else:
+            # ✅ Always set video_id so the player renders regardless of transcript
+            st.session_state.video_id = vid
+            st.session_state.video_url = video_url
+            st.session_state.ai_answer = ""
+
             with st.spinner("Fetching transcript…"):
                 t, err = fetch_transcript(vid)
             if err:
                 st.session_state.fetch_error = err
                 st.session_state.transcript = None
-                st.session_state.video_id = None
             else:
                 st.session_state.transcript = t
-                st.session_state.video_id = vid
-                st.session_state.video_url = video_url
                 st.session_state.fetch_error = ""
-                st.session_state.ai_answer = ""
 
     # Status feedback
     if st.session_state.fetch_error:
         st.markdown(f'<div class="msg-error">{st.session_state.fetch_error}</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="msg-info">▶ Video loaded below — transcript unavailable for Q&A.</div>',
+            unsafe_allow_html=True,
+        )
     elif st.session_state.transcript:
         wc = len(st.session_state.transcript.split())
         st.markdown(f'<div class="msg-success">✅ Transcript ready · {wc:,} words</div>', unsafe_allow_html=True)
