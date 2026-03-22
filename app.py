@@ -307,7 +307,7 @@ with st.sidebar:
     video_url = st.text_input(
         label="url",
         value=st.session_state.video_url,
-        placeholder="https://youtube.com/watch?v=...",
+        placeholder="Enter Youtube Video URL...",
         label_visibility="collapsed",
         key="url_input",
     )
@@ -350,7 +350,7 @@ with st.sidebar:
     st.markdown('<div class="sidebar-label">Your Question</div>', unsafe_allow_html=True)
     query = st.text_area(
         label="query",
-        placeholder="e.g. What is the main topic?\nSummarise the key points.\nWhat does the speaker say about X?",
+        placeholder="e.g. Summarise the key points.",
         height=140,
         label_visibility="collapsed",
         key="query_input",
