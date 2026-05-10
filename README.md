@@ -1,5 +1,6 @@
 # 🧠 VidMind — AI-Powered YouTube Video Q&A
 
+![Live Demo](https://vidmind.streamlit.app/)
 > Paste a YouTube link. Ask anything. Get answers grounded in the full transcript — instantly.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
