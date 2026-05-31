@@ -388,7 +388,7 @@ with st.sidebar:
 # ──────────────────────────────────────────────
 # 📄  MAIN AREA  –  Two tabs
 # ──────────────────────────────────────────────
-tab_qa, tab_viewer = st.tabs(["✦  AI Answer", "🎥  Video & Transcript"])
+tab_qa, tab_viewer,tab_about = st.tabs(["✦  AI Answer", "🎥  Video & Transcript","👨‍💻 Developer"])
 
 # ── TAB 1 : AI Q&A ──────────────────────────
 with tab_qa:
@@ -478,3 +478,96 @@ with tab_viewer:
                 '</div>',
                 unsafe_allow_html=True,
             )
+with tab_about:
+
+    st.markdown("## 👨‍💻 About Me")
+
+    st.markdown(
+        """
+        <div class="card card-accent">
+            <h2>👋 Asadullah Shehbaz</h2>
+
+            <p>
+            🚀 Data Scientist<br>
+            🤖 ML Engineer<br>
+            📊 Full Stack AI Engineer
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("")
+
+    st.markdown(
+        """
+        <div class="card">
+            <h3>🧠 What I Do</h3>
+
+            <ul>
+                <li>Machine Learning</li>
+                <li>Deep Learning</li>
+                <li>Computer Vision</li>
+                <li>Natural Language Processing</li>
+                <li>AI Agents & Automation</li>
+                <li>RAG Systems</li>
+                <li>Full Stack AI Applications</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="card">
+            <h3>📫 Contact</h3>
+
+            <p>
+            📧 asadullahcreative@gmail.com
+            </p>
+
+            <p>
+            🌐 <a href="https://asadullahshehbaz.up.railway.app/" target="_blank">
+            Portfolio Website
+            </a>
+            </p>
+
+            <p>
+            🔗 <a href="https://www.linkedin.com/in/asadullah-shehbaz-18172a2bb/" target="_blank">
+            LinkedIn
+            </a>
+            </p>
+
+            <p>
+            🐙 <a href="https://github.com/AsadullahShehbaz" target="_blank">
+            GitHub
+            </a>
+            </p>
+
+            <p>
+            🏆 <a href="https://www.kaggle.com/asadullahcreative" target="_blank">
+            Kaggle
+            </a>
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="stat-row">
+            <span class="stat-chip">Python</span>
+            <span class="stat-chip">Machine Learning</span>
+            <span class="stat-chip">Deep Learning</span>
+            <span class="stat-chip">LLMs</span>
+            <span class="stat-chip">LangChain</span>
+            <span class="stat-chip">Streamlit</span>
+            <span class="stat-chip">FastAPI</span>
+            span class="stat-chip">React</span>
+            span class="stat-chip">Tailwind CSS</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
