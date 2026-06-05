@@ -256,7 +256,7 @@ def fetch_transcript(video_id: str) -> tuple[str | None, str | None]:
     except NoTranscriptFound:
         return None, "No English or Hindi transcript found."
     except Exception as e:
-        return None, f"API is blocked by Youtube for few moments!"
+        return None, "Transcript temporarily unavailable."
 
 
 def video_embed_html(video_id: str) -> str:
